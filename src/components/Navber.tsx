@@ -66,9 +66,9 @@ export default function Navbar() {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" render={<Link href="/login">Login</Link>}/>
-                
-              <Button render={<Link href="/register">Register</Link>}/>
+              <Button variant="ghost" render={<Link href="/login">Login</Link>} />
+
+              <Button render={<Link href="/register">Register</Link>} />
             </>
           )}
         </div>
@@ -76,11 +76,16 @@ export default function Navbar() {
         {/* Mobile */}
         <div className="md:hidden">
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <HiOutlineMenu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
+            <Sheet>
+              <SheetTrigger render={
+                <Button variant="ghost" size="icon">
+                  <HiOutlineMenu className="h-6 w-6" />
+                </Button>
+              } />
+              <SheetContent side="right">
+                ...
+              </SheetContent>
+            </Sheet>
 
             <SheetContent side="right">
               <div className="mt-8 flex flex-col gap-6">
@@ -99,13 +104,8 @@ export default function Navbar() {
                     </>
                   ) : (
                     <div className="flex flex-col gap-3">
-                      <Button asChild>
-                        <Link href="/login">Login</Link>
-                      </Button>
-
-                      <Button variant="outline" asChild>
-                        <Link href="/register">Register</Link>
-                      </Button>
+                      <Button render={<Link href="/login">Login</Link>} />
+                      <Button variant="outline" render={<Link href="/register">Register</Link>} />
                     </div>
                   )}
                 </div>

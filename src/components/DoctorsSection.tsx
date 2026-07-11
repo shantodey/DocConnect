@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import type { StaticImageData } from "next/image";
 import { FaStar, FaArrowRight } from 'react-icons/fa6';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Autoplay } from 'swiper/modules';
@@ -10,7 +11,9 @@ import { Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-// TypeScript Interface for Doctor Data
+import doc_one from '../assats/doc-1.png'
+import doc_two from '../assats/doc-2.png'
+import doc_three from '../assats/doc-3.jpg'
 interface Doctor {
   id: number;
   name: string;
@@ -20,7 +23,7 @@ interface Doctor {
   patientsCount: string;
   hospital: string;
   imageBgColor: string;
-  imageSrc: string;
+   imageSrc: string | StaticImageData;
 }
 
 const doctorsData: Doctor[] = [
@@ -33,7 +36,7 @@ const doctorsData: Doctor[] = [
     patientsCount: "+1500 patients",
     hospital: "At Mount Adora Hospital, Sylhet.",
     imageBgColor: "bg-[#4ade80]", // Green background
-    imageSrc: "/doctor1.png" // Replace with your image paths
+    imageSrc: doc_one ,
   },
   {
     id: 2,
@@ -44,7 +47,7 @@ const doctorsData: Doctor[] = [
     patientsCount: "+1500 patients",
     hospital: "At Mount Adora Hospital, Sylhet.",
     imageBgColor: "bg-[#a855f7]", // Purple background
-    imageSrc: "/doctor2.png"
+    imageSrc: doc_two,
   },
   {
     id: 3,
@@ -55,9 +58,20 @@ const doctorsData: Doctor[] = [
     patientsCount: "+1500 patients",
     hospital: "At Mount Adora Hospital, Sylhet.",
     imageBgColor: "bg-[#f9a8d4] sm:bg-[#fbcfe8] lg:bg-[#fca5a5] bg-[#ffaa6d]", // Soft Orange/Peach background
-    imageSrc: "/doctor3.png"
+    imageSrc: doc_three,
   },
-  // You can add more doctors here to test the slider
+  {
+    id: 4,
+    name: "Dr. Vikash Trivedi",
+    specialty: "Dermatologist",
+    rating: 4.8,
+    reviewsCount: 272,
+    patientsCount: "+1500 patients",
+    hospital: "At Mount Adora Hospital, Sylhet.",
+    imageBgColor: "bg-[#f9a8d4] sm:bg-[#fbcfe8] lg:bg-[#fca5a5] bg-[#ffaa6d]", // Soft Orange/Peach background
+    imageSrc: doc_three,
+  },
+
 ];
 
 export default function DoctorsSection() {
