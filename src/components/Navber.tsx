@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 
 const links = [
-  { label: "Home", href: "/" },
   { label: "Find a Doctor", href: "/doctors" },
   { label: "Services", href: "/services" },
   { label: "Contact", href: "/contact" },
@@ -37,11 +36,7 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-10 md:flex">
           {links.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="text-sm font-medium text-gray-600 transition hover:text-sky-600"
-            >
+            <Link key={item.label} href={item.href}  className="text-sm font-medium text-gray-600 transition hover:text-sky-600">
               {item.label}
             </Link>
           ))}
