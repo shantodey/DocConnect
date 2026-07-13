@@ -7,6 +7,8 @@ import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { authClient } from "@/lib/auth-client";
+import { createAuthClient } from "better-auth/react";
+import { FcGoogle } from "react-icons/fc";
 
 
 interface IFormInputs {
@@ -40,7 +42,6 @@ export default function LoginPage() {
                 },
                 {
                     onRequest: (ctx) => {
-                        // লোডিং স্টেট এখানে অন করতে পারেন
                         console.log("Logging in...");
                     },
                     onSuccess: (ctx) => {
@@ -58,6 +59,13 @@ export default function LoginPage() {
         }
     };
 
+    // google login 
+    const authClient = createAuthClient();
+    const signIn = async () => {
+        const data = await authClient.signIn.social({
+            provider: "google",
+        });
+    };
     return (
         <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
             <div className="w-full max-w-[450px] rounded-xl border border-slate-100 bg-white p-8 shadow-sm">
@@ -91,7 +99,12 @@ export default function LoginPage() {
                         Login
                     </Button>
                 </form>
-
+                <button onClick={signIn}
+                    className="flex items-center mt-3 justify-center gap-3 w-full h-11 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors shadow-sm"
+                >
+                    <FcGoogle className="w-5 h-5 shrink-0" />
+                    <span>Continue with Google</span>
+                </button>
                 <div className="mt-6 text-center text-sm text-slate-600">  Don’t have an account?{" "}
                     <Link href="/register" className="text-blue-600 hover:underline font-medium"> Register</Link>
                 </div>

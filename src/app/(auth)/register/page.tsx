@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
+import { createAuthClient } from "better-auth/react";
+import { FcGoogle } from "react-icons/fc";
+import { IoIosArrowRoundUp } from "react-icons/io";
 
 interface ISignupInputs {
   name: string;
@@ -30,7 +33,7 @@ export default function SignupPage() {
   const [photoError, setPhotoError] = useState<string>("");
 
   // React Hook Form
-  const { register, handleSubmit } = useForm<ISignupInputs>({
+  const { register, handleSubmit, setValue } = useForm<ISignupInputs>({
     defaultValues: {
       name: "",
       email: "",
@@ -39,6 +42,15 @@ export default function SignupPage() {
       gender: "",
     }
   });
+
+  // Demo Credentials Auto-fill Function
+  const handleDemoFill = () => {
+    setValue("name", "John Doe");
+    setValue("email", "demo.patient@example.com");
+    setValue("password", "Demo12345!");
+    setValue("role", "Patient");
+    setValue("gender", "Male");
+  };
 
   // ImgBB Upload
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +102,6 @@ export default function SignupPage() {
 
   const onSubmit: SubmitHandler<ISignupInputs> = async (data) => {
     const { name, email, password } = data;
-    const image = photoUrl; 
 
     try {
       const res = await authClient.signUp.email(
@@ -119,32 +130,36 @@ export default function SignupPage() {
       console.error("Signup execution error:", err);
     }
   };
+
+  // google login 
+  const client = createAuthClient();
+  const signIn = async () => {
+    const data = await client.signIn.social({
+      provider: "google",
+    });
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-
       <div className="flex w-full max-w-[900px] items-center overflow-hidden rounded-xl border border-slate-100 bg-white p-4 shadow-sm md:p-8">
         <div className="hidden w-1/2 aspect-square bg-blue-600 rounded-lg md:block">
-          <Image height={400} width={400} src="https://walkin-clinic.co.uk/wp-content/uploads/2025/01/Urgent-Doctor-Appointment-1024x560.png"
+          <Image height={400} width={400} src="https://usamrukenya.org/portraitgray.jpg"
             alt="Design Graphic"
             className="h-full w-full object-cover opacity-90 rounded-lg"
           />
         </div>
 
         <div className="w-full md:w-1/2 md:pl-12 py-4">
-          <div className="mb-8">
+          <div className="mb-8 flex justify-between items-center">
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               Create an <span className="text-blue-600">account</span>
             </h1>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
             {/* Full Name */}
             <div>
-              <Input
-                type="text"
-                {...register("name")}
-                placeholder="Full Name"
+              <Input type="text" {...register("name")} placeholder="Full Name"
                 className="h-11 border-x-0 border-t-0 border-b rounded-none px-0 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 placeholder:text-slate-400 text-sm"
               />
             </div>
@@ -159,24 +174,17 @@ export default function SignupPage() {
               />
             </div>
 
-            {/* Password Field with functional dynamic Eye Toggle Button */}
+            {/* Password Field */}
             <div className="relative">
-              <Input
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-                placeholder="Password"
-                className="h-11 border-x-0 border-t-0 border-b rounded-none pl-0 pr-10 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 placeholder:text-slate-400 w-full text-sm"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 bottom-3 text-slate-400 hover:text-slate-600 transition-colors"
-              >
+              <Input type={showPassword ? "text" : "password"} {...register("password")} placeholder="Password"
+                className="h-11 border-x-0 border-t-0 border-b rounded-none pl-0 pr-10 shadow-none focus-visible:ring-0 focus-visible:border-blue-600 placeholder:text-slate-400 w-full text-sm" />
+              <button type="button" onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 bottom-3 text-slate-400 hover:text-slate-600 transition-colors">
                 {showPassword ? <FaRegEyeSlash size={16} /> : <FaRegEye size={16} />}
               </button>
             </div>
 
-            {/* Dropdowns (Flex layout as per second image) */}
+            {/* Dropdowns */}
             <div className="flex gap-6 pt-2">
               <div className="w-1/2 text-left">
                 <label className="text-xs text-slate-500 block mb-1">Are you a:</label>
@@ -202,7 +210,7 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Image Upload Row (Avatar + Button) */}
+            {/* Image Upload Row */}
             <div className="flex items-center gap-4 py-2">
               <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-slate-200 bg-slate-100">
                 {photoPreview ? (
@@ -212,46 +220,43 @@ export default function SignupPage() {
                 )}
               </div>
 
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                onChange={handlePhotoChange}
-                className="hidden"
-              />
+              <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePhotoChange} className="hidden" />
 
               <div className="flex flex-col items-start">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={isUploading}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold px-4 py-2 rounded-lg text-xs h-9 transition-colors"
-                >
+                <Button type="button" variant="secondary" disabled={isUploading} onClick={() => fileInputRef.current?.click()}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-semibold px-4 py-2 rounded-lg text-xs h-9 transition-colors">
                   {isUploading ? "Uploading..." : "Upload Photo"}
                 </Button>
                 {photoError && <p className="text-red-500 text-[10px] mt-1">{photoError}</p>}
               </div>
+              <div className="flex flex-wrap items-center gap-2 md:flex-row">
+                <Button variant="outline" onClick={handleDemoFill} >Demo Data <IoIosArrowRoundUp /></Button>
+              </div>
+             
             </div>
 
-            {/* Sign Up Submit Button */}
-            <Button
-              type="submit"
-              disabled={isUploading}
-              className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition-colors mt-2"
-            >
+            <Button type="submit" disabled={isUploading} className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition-colors mt-2">
               Sign Up
             </Button>
           </form>
 
-          {/* Footer Link */}
-          <div className="mt-6 text-center text-sm text-slate-600">
-            Already have an account?{" "}
-            <Link href="/login" className="text-blue-600 hover:underline font-medium">
-              Login
-            </Link>
-          </div>
+          <div className="w-full max-w-sm mt-3 mx-auto space-y-4">
 
+            <button onClick={signIn}
+              className="flex items-center justify-center gap-3 w-full h-11 px-4 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-colors shadow-sm"
+            >
+              <FcGoogle className="w-5 h-5 shrink-0" />
+              <span>Continue with Google</span>
+            </button>
+
+            {/* Footer Link */}
+            <div className="text-center text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link href="/login" className="text-[#006BFF] hover:underline font-semibold transition-all">
+                Login
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
