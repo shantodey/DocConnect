@@ -47,17 +47,14 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
 
-            <DropdownMenu>
-              <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full"><Avatar>
+            <DropdownMenu >
+              <DropdownMenuTrigger className="bg-yellow-50" render={<Button variant="ghost" size="icon" className="rounded-full border-2"><Avatar>
                 <AvatarImage src={image || "/avatar.jpg"} alt={name} />
-                <AvatarFallback>LR</AvatarFallback>
+                <AvatarFallback>{name}</AvatarFallback>
               </Avatar></Button>} />
               <DropdownMenuContent align="end">
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <FiUser />
-                    Account
-                  </DropdownMenuItem>
+                  <DropdownMenuItem render={<Link href="/profile"></Link>}>  <FiUser /> Account </DropdownMenuItem>
                   <DropdownMenuItem>
                     <BellIcon />
                     Notifications

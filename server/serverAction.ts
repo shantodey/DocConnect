@@ -32,3 +32,19 @@ export async function getDoctorById(id: string) {
     return null;
   }
 }
+
+
+
+export async function updateProfile(id: string, name: string, email: string, image?: string | null) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/user/update`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, name, email, image }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error in updateProfile:", error);
+    return { success: false, message: "Failed to update profile" };
+  }
+}

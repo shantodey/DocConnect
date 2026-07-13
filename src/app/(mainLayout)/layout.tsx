@@ -1,6 +1,5 @@
 import Footer from '@/components/Footer';
 import Navbar from '@/components/Navber';
-import React from 'react';
 import { Toaster } from 'sonner';
 
 const layout = ({children}) => {
