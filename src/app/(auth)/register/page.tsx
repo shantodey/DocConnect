@@ -6,6 +6,8 @@ import Link from "next/link";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import Image from "next/image";
 
 interface ISignupInputs {
   name: string;
@@ -22,8 +24,6 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 export default function SignupPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  
-  // ইমেজ স্টেট
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -88,22 +88,43 @@ export default function SignupPage() {
     }
   };
 
-  const onSubmit: SubmitHandler<ISignupInputs> = (data) => {
-    const payload = {
-      ...data,
-      image: photoUrl,
-      callbackURL: "/",
-    };
-    console.log("Submitting Payload:", payload);
-  };
+  const onSubmit: SubmitHandler<ISignupInputs> = async (data) => {
+    const { name, email, password } = data;
+    const image = photoUrl; 
 
+    try {
+      const res = await authClient.signUp.email(
+        {
+          email,
+          password,
+          name,
+          image: photoUrl || undefined,
+          callbackURL: "/",
+        },
+        {
+          onRequest: (ctx) => {
+            console.log("Signing up...");
+          },
+          onSuccess: (ctx) => {
+            console.log("Signup successful", ctx);
+          },
+          onError: (ctx) => {
+            alert(ctx.error.message);
+          },
+        }
+      );
+
+      console.log("Response:", res);
+    } catch (err: any) {
+      console.error("Signup execution error:", err);
+    }
+  };
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
 
       <div className="flex w-full max-w-[900px] items-center overflow-hidden rounded-xl border border-slate-100 bg-white p-4 shadow-sm md:p-8">
         <div className="hidden w-1/2 aspect-square bg-blue-600 rounded-lg md:block">
-          <img
-            src="https://walkin-clinic.co.uk/wp-content/uploads/2025/01/Urgent-Doctor-Appointment-1024x560.png"
+          <Image height={400} width={400} src="https://walkin-clinic.co.uk/wp-content/uploads/2025/01/Urgent-Doctor-Appointment-1024x560.png"
             alt="Design Graphic"
             className="h-full w-full object-cover opacity-90 rounded-lg"
           />
@@ -117,7 +138,7 @@ export default function SignupPage() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            
+
             {/* Full Name */}
             <div>
               <Input
@@ -190,7 +211,7 @@ export default function SignupPage() {
                   <div className="h-full w-full bg-slate-200" />
                 )}
               </div>
-              
+
               <input
                 type="file"
                 accept="image/*"
@@ -198,7 +219,7 @@ export default function SignupPage() {
                 onChange={handlePhotoChange}
                 className="hidden"
               />
-              
+
               <div className="flex flex-col items-start">
                 <Button
                   type="button"
@@ -230,7 +251,7 @@ export default function SignupPage() {
               Login
             </Link>
           </div>
-          
+
         </div>
       </div>
     </div>

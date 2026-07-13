@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { authClient } from "@/lib/auth-client";
 
 
 interface IFormInputs {
@@ -26,8 +27,35 @@ export default function LoginPage() {
         },
     });
 
-    const onSubmit: SubmitHandler<IFormInputs> = (data) => {
-        console.log("Login Payload:", data);
+    const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+        const { email, password } = data;
+
+        try {
+            const res = await authClient.signIn.email(
+                {
+                    email,
+                    password,
+                    callbackURL: "/",
+                    rememberMe: true,
+                },
+                {
+                    onRequest: (ctx) => {
+                        // লোডিং স্টেট এখানে অন করতে পারেন
+                        console.log("Logging in...");
+                    },
+                    onSuccess: (ctx) => {
+                        console.log("Login successful:", ctx);
+                    },
+                    onError: (ctx) => {
+                        alert(ctx.error.message);
+                    },
+                }
+            );
+
+            console.log("Response:", res);
+        } catch (err: any) {
+            console.error("Login execution error:", err);
+        }
     };
 
     return (
