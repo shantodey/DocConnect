@@ -6,6 +6,17 @@ interface Doctor {
   specialty: string;
 }
 
+export async function getRandomDoctors(limit: number = 7) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/doctors/random?limit=${limit}`);
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching random doctors:", error);
+    return [];
+  }
+}
+
 export async function getDoctors(search?: string, page: number = 1, sort?: string, specialty?: string) {
   try {
     const params = new URLSearchParams({ page: page.toString(), limit: "8" });
