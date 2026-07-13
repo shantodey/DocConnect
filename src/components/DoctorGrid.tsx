@@ -19,6 +19,7 @@ export function DoctorGrid({ searchParams }: { searchParams: Promise<{ search?: 
 
   return (
     <div>
+
       <div className="w-full bg-[#FAF6EC] py-16 px-4 flex flex-col items-center justify-center text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-black mb-8 tracking-tight">Find a Doctor</h1>
         <form onSubmit={(e) => {
