@@ -78,7 +78,7 @@ export default function HeroSection() {
                 
                 <div className="flex items-center gap-2 pt-1">
                   <div className="w-6 h-6 rounded-full overflow-hidden bg-slate-200">
-                    <Image  src="/avatar.png"  alt="Naif Farooqui"  width={24}  height={24}/>
+                    <Image  src={Doc_three}   alt="Naif Farooqui"  width={24}  height={24}/>
                   </div>
                   <span className="text-xs font-bold text-slate-800">Naif Farooqui</span>
                 </div>

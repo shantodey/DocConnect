@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { updateProfile } from "../../../../server/serverAction";
+import Image from "next/image";
 
 export default function ProfilePage() {
     const { data: session } = authClient.useSession();
@@ -53,7 +54,7 @@ export default function ProfilePage() {
                         <h3 className="font-semibold text-slate-800 text-base mb-4">Account Management</h3>
                         <div className="border border-slate-200 rounded-xl p-4 flex flex-col items-center space-y-4 bg-slate-50/50">
                             <div className="w-full h-72 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden">
-                                <img src={photoUrl || "https://placeholder.co/300"} alt="Profile" className="w-full h-full object-cover" />
+                                <Image height={100} width={100} src={photoUrl!} quality={100} alt="Profile" className="w-full h-full object-cover" />
                             </div>
                             <label className="w-full">
                                 <div className="w-full flex items-center justify-center inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors h-10 px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground cursor-pointer text-center">

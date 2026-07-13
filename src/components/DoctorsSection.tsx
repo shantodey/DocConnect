@@ -79,7 +79,6 @@ export default function DoctorsSection() {
     <section className="w-full bg-white py-16 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto">
         
-        {/* Header Section */}
         <div className="text-center max-w-xl mx-auto mb-14 space-y-3">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 tracking-tight">
             Our great doctors

@@ -27,7 +27,7 @@ export default function Navbar() {
     await authClient.signOut();
   }
   return (
-    <header className="border-b bg-white">
+    <header className=" bg-gradient-to-r from-[#CEF1F4] via-white to-[#FFF5DF]">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
         <Link href="/" className="flex items-center gap-3">
           <Image src={logo} alt="logo" />
