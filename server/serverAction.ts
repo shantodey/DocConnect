@@ -61,7 +61,7 @@ export async function updateProfile(id: string, name: string, email: string, ima
 }
 
 export async function createAppointment(bookingData: {
-   doctorId: string | { $oid: string } | undefined;
+  doctorId: string | { $oid: string } | undefined;
   userName: string;
   userEmail: string;
   doctorName: string;
@@ -104,4 +104,17 @@ export async function getMyAppointments(userid: string) {
     console.error("Error fetching appointments:", error);
     return [];
   }
+}
+
+
+
+export async function cancelAppointment(id: string) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/appointments/${id}`, { method: "DELETE" });
+    return response.ok;
+  } catch (error) {
+    console.error("Error Canceling your appointments:", error);
+    return [];
+  }
+
 }
