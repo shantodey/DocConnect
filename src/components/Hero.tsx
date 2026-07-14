@@ -23,12 +23,17 @@ export default function HeroSection() {
             et Malorum" by Cicero are also reproduced in their exact original form.
           </p>
 
-          <Button render={
-            <Link className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-full inline-flex gap-2" href={'/doctors'}>
-              <FaCalendarCheck /> Request an Appointment
-            </Link>
-          }>
-          </Button>
+          <Button
+            nativeButton={false}
+            render={
+              <Link
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-full inline-flex gap-2"
+                href={'/doctors'}
+              >
+                <FaCalendarCheck /> Request an Appointment
+              </Link>
+            }
+          />
 
           {/* Stats */}
           <div className="flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-12 pt-6 sm:pt-8">

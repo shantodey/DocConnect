@@ -118,3 +118,18 @@ export async function cancelAppointment(id: string) {
   }
 
 }
+
+
+export async function addDoctorService(doctor: Record<string, any>) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/doctors`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(doctor),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error("Error adding doctor:", error);
+    return false;
+  }
+}

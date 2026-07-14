@@ -22,7 +22,8 @@ const links = [
 export default function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
-  const { image, name } = user || { image: undefined, name: "" };
+  
+  const { image, name, role }: any = user || { image: undefined, name: "", role: '' };
   const logout = async () => {
     await authClient.signOut();
   }
@@ -46,18 +47,26 @@ export default function Navbar() {
         {/* Right */}
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
-
-            <DropdownMenu >
-              <DropdownMenuTrigger nativeButton={false} render={
-                <Button variant="ghost" size="icon" className="rounded-full border-2"><Avatar>
-                  <AvatarImage src={image || "/avatar.jpg"} alt={name} />
-                  <AvatarFallback>{name}</AvatarFallback>
-                </Avatar></Button>
+            <>
+            {role === "Doctor" ? (
+              // ponytail: Added nativeButton={false} because we are rendering a Link inside
+              <Button nativeButton={false} variant="ghost" render={<Link href="/addservice"> Enlist your services </Link>} /> 
+            ) : <></>}
+            
+            <DropdownMenu>
+              {/* ponytail: Trigger elements containing native button get nativeButton={false} or we use native HTML buttons */}
+              <DropdownMenuTrigger render={
+                <button className="rounded-full border-2">
+                  <Avatar>
+                    <AvatarImage src={image || "/avatar.jpg"} alt={name} />
+                    <AvatarFallback>{name}</AvatarFallback>
+                  </Avatar>
+                </button>
               } />
               <DropdownMenuContent align="end" className={'bg-white'}>
                 <DropdownMenuGroup>
-                  <DropdownMenuItem nativeButton={false} render={<Link href="/profile"></Link>}>  <FiUser /> Account </DropdownMenuItem>
-                  <DropdownMenuItem nativeButton={false} render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>}></DropdownMenuItem>
+                  <DropdownMenuItem render={<Link href="/profile"><FiUser /> Account </Link>} />
+                  <DropdownMenuItem render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>} />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
@@ -66,10 +75,12 @@ export default function Navbar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </>
           ) : (
             <>
-              <Button variant="ghost" render={<Link href="/login">Login</Link>} />
-              <Button render={<Link href="/register">Register</Link>} />
+              {/* ponytail: Prevent warnings by setting nativeButton={false} when rendering standard Links inside custom Buttons */}
+              <Button nativeButton={false} variant="ghost" render={<Link href="/login">Login</Link>} />
+              <Button nativeButton={false} render={<Link href="/register">Register</Link>} />
             </>
           )}
         </div>
@@ -78,9 +89,9 @@ export default function Navbar() {
         <div className="md:hidden bg-white">
           <Sheet>
             <SheetTrigger render={
-              <Button variant="ghost" size="icon">
+              <button>
                 <HiOutlineMenu className="h-6 w-6" />
-              </Button>
+              </button>
             } />
             <SheetContent side="right" className={'bg-white'}>
               <div className="mt-8 flex flex-col gap-6 px-4">
@@ -92,15 +103,14 @@ export default function Navbar() {
 
                 <div className="mt-4 border-t pt-4">
                   {user ? (
-                    <>
-                      <Link href="/profile">Profile</Link>
-                      <br />
-                      <Link href="/dashboard">Dashboard</Link>
-                    </>
+                    <div className="flex flex-col gap-3">
+                      <Link href="/profile" className="text-lg">Profile</Link>
+                      <Link href="/dashboard" className="text-lg">Dashboard</Link>
+                    </div>
                   ) : (
                     <div className="flex flex-col gap-3">
-                      <Button render={<Link href="/login">Login</Link>} nativeButton={false} />
-                      <Button variant="outline" render={<Link href="/register">Register</Link>} nativeButton={false} />
+                      <Button nativeButton={false} render={<Link href="/login">Login</Link>} />
+                      <Button nativeButton={false} variant="outline" render={<Link href="/register">Register</Link>}  />
                     </div>
                   )}
                 </div>

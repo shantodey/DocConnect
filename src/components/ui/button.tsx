@@ -44,11 +44,13 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton, // ponytail: Destructure nativeButton to handle nested contexts easily
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
   return (
     <ButtonPrimitive
       data-slot="button"
+      nativeButton={nativeButton} // ponytail: Forward the prop down to Base UI primitive
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

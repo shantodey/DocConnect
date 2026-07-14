@@ -7,7 +7,6 @@ const db = client.db("DocConnect");
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
-
     client
   }),
   emailAndPassword: {
