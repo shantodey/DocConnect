@@ -20,18 +20,20 @@ export function DoctorGrid({ searchParams }: { searchParams: Promise<{ search?: 
     getDoctors(search, currentPage, sort, specialty).then(setData);
   }, [search, currentPage, sort, specialty]);
 
-  const updateFilters = (key: string, value: string | null) => {
+const updateFilters = (key: string, value: string | null) => {
     const params = new URLSearchParams();
     if (search) params.append("search", search);
     if (sort) params.append("sort", sort);
     if (specialty) params.append("specialty", specialty);
+    if (key === "page") {
+      if (value) params.set("page", value);
+    } else {
+      const safeValue = value || "all";
+      if (safeValue === "all") params.delete(key);
+      else params.set(key, safeValue);
+      params.set("page", "1"); 
+    }
 
-    const safeValue = value || "all";
-
-    if (safeValue === "all") params.delete(key);
-    else params.set(key, safeValue);
-
-    params.set("page", "1");
     router.push(`/doctors?${params.toString()}`);
   };
   return (
