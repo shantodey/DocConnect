@@ -7,7 +7,7 @@ const layout = ({children}) => {
         <main className="min-h-full flex flex-col">
             <Navbar/>
             {children}
-             <Toaster />
+             <Toaster position="top-center" />
             <Footer/>
         </main>
     );

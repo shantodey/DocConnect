@@ -65,7 +65,7 @@ export default function Footer() {
               { icon: <FaInstagram />, href: 'https://instagram.com', label: 'Instagram' },
               { icon: <FaLinkedinIn />, href: 'https://linkedin.com', label: 'LinkedIn' },
             ].map((social, index) => (
-              <a
+              <Link
                 key={index}
                 href={social.href}
                 target="_blank"
@@ -74,7 +74,7 @@ export default function Footer() {
                 className="w-9 h-9 rounded-full border border-slate-700 flex items-center justify-center text-slate-800 hover:bg-slate-900 hover:text-white hover:border-slate-900 transition-all duration-300"
               >
                 <span className="text-sm">{social.icon}</span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

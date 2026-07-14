@@ -59,3 +59,33 @@ export async function updateProfile(id: string, name: string, email: string, ima
     return { success: false, message: "Failed to update profile" };
   }
 }
+
+export async function createAppointment(bookingData: {
+  userName: string;
+  userEmail: string;
+  doctorName: string;
+  specialty: string;
+  fee: number;
+  date: string;
+  timeSlot: string;
+}) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/appointments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return { success: false, message: errorData.message || "Failed to book" };
+    }
+
+    return { success: true, data: await response.json() };
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    return { success: false, message: "Server connection failed" };
+  }
+}
