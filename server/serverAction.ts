@@ -91,3 +91,17 @@ export async function createAppointment(bookingData: {
     return { success: false, message: "Server connection failed" };
   }
 }
+
+
+
+
+export async function getMyAppointments(userid: string) {
+  try {
+    const response = await fetch(`${process.env.SERVER_URL}/appointments/${userid}`, { cache: "no-store" });
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return [];
+  }
+}
