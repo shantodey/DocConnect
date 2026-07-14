@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
-import { updateProfile } from "../server/serverAction";
+import { updateProfile } from "../../../../server/serverAction";
 import Image from "next/image";
 
 export default function ProfilePage() {

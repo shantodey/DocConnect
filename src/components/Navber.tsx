@@ -11,6 +11,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { FiUser } from "react-icons/fi";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 
 
 const links = [
@@ -22,7 +23,7 @@ const links = [
 export default function Navbar() {
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
-  
+
   const { image, name, role }: any = user || { image: undefined, name: "", role: '' };
   const logout = async () => {
     await authClient.signOut();
@@ -48,33 +49,48 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           {user ? (
             <>
-            {role === "Doctor" ? (
-              // ponytail: Added nativeButton={false} because we are rendering a Link inside
-              <Button nativeButton={false} variant="ghost" render={<Link href="/addservice"> Enlist your services </Link>} /> 
-            ) : <></>}
-            
-            <DropdownMenu>
-              {/* ponytail: Trigger elements containing native button get nativeButton={false} or we use native HTML buttons */}
-              <DropdownMenuTrigger render={
-                <button className="rounded-full border-2">
-                  <Avatar>
-                    <AvatarImage src={image || "/avatar.jpg"} alt={name} />
-                    <AvatarFallback>{name}</AvatarFallback>
-                  </Avatar>
-                </button>
-              } />
-              <DropdownMenuContent align="end" className={'bg-white'}>
-                <DropdownMenuGroup>
-                  <DropdownMenuItem render={<Link href="/profile"><FiUser /> Account </Link>} />
-                  <DropdownMenuItem render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>} />
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                  <LogOutIcon />
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              {role === "Doctor" ? (
+                <HoverCard>
+                  <HoverCardTrigger
+                    delay={10}
+                    closeDelay={100}
+                    render={
+                      // ponytail: nativeButton={false} because we're rendering a Link inside
+                      <Button nativeButton={false} variant="ghost" render={<Link href="/addservice">Add Services</Link>} />
+                    }
+                  />
+                  <HoverCardContent className="flex w-64 flex-col gap-0.5 bg-white">
+                    <div className="font-semibold">Become a listed doctor</div>
+                    <div>Add your specialization, fees, and available slots so patients can book you directly.</div>
+                    <div className="mt-1 text-xs text-muted-foreground">Takes about 2 minutes</div>
+                  </HoverCardContent>
+                </HoverCard>
+              ) : (
+                <></>
+              )}
+
+              <DropdownMenu>
+                {/* ponytail: Trigger elements containing native button get nativeButton={false} or we use native HTML buttons */}
+                <DropdownMenuTrigger render={
+                  <button className="rounded-full border-2">
+                    <Avatar>
+                      <AvatarImage src={image || "/avatar.jpg"} alt={name} />
+                      <AvatarFallback>{name}</AvatarFallback>
+                    </Avatar>
+                  </button>
+                } />
+                <DropdownMenuContent align="end" className={'bg-white'}>
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem render={<Link href="/profile"><FiUser /> Account </Link>} />
+                    <DropdownMenuItem render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>} />
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOutIcon />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <>
@@ -110,7 +126,7 @@ export default function Navbar() {
                   ) : (
                     <div className="flex flex-col gap-3">
                       <Button nativeButton={false} render={<Link href="/login">Login</Link>} />
-                      <Button nativeButton={false} variant="outline" render={<Link href="/register">Register</Link>}  />
+                      <Button nativeButton={false} variant="outline" render={<Link href="/register">Register</Link>} />
                     </div>
                   )}
                 </div>
@@ -122,3 +138,4 @@ export default function Navbar() {
     </header>
   );
 }
+

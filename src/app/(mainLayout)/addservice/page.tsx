@@ -1,89 +1,125 @@
 "use client";
 
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { addDoctorService } from "../../../../server/serverAction";
 import { authClient } from "@/lib/auth-client";
 
 interface IDoctorServiceInput {
-    specialization: string;
-    experience: number;
-    fee: number;
-    currency: string;
-    about: string;
-    education: {
-        degree: string;
-        university: string;
-        startDate: string;
-        endDate: string;
-    };
-    experienceDetails: {
-        position: string;
-        hospital: string;
-        startDate: string;
-        endDate: string;
-    };
-    availableSlots: {
-        startTime?: string;
-        endTime?: string;
-        time: string;
-        status: "available" | "booked";
-    }[];
-    name?: string;
-    email?: string;
-    role?: string;
-    image?: string;
-    rating?: number;
-    patientCount?: number;
+  specialization: string;
+  experience: number;
+  fee: number;
+  currency: string;
+  about: string;
+  education: {
+    degree: string;
+    university: string;
+    startDate: string;
+    endDate: string;
+  };
+  experienceDetails: {
+    position: string;
+    hospital: string;
+    startDate: string;
+    endDate: string;
+  };
+  availableSlots: {
+    startTime?: string;
+    endTime?: string;
+    time: string;
+    status: "available" | "booked";
+  }[];
+  name?: string;
+  email?: string;
+  role?: string;
+  image?: string;
+  rating?: number;
+  patientCount?: number;
 }
 
 export default function AddDoctorServiceForm() {
-    const { data: session } = authClient.useSession();
-    const user = session?.user;
-    const { image, name, role, email }: any = user || { image: undefined, name: "", role: "", email: "" };
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+  const { image, name, role, email }: any = user || {
+    image: undefined,
+    name: "",
+    role: "",
+    email: "",
+  };
 
-    const { register, control, handleSubmit, formState: { errors } } = useForm<IDoctorServiceInput>({
-        defaultValues: { currency: "BDT", availableSlots: [{ startTime: "10:00", endTime: "13:00", status: "available" } as any], },
-    });
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<IDoctorServiceInput>({
+    defaultValues: {
+      currency: "BDT",
+      availableSlots: [
+        { startTime: "10:00", endTime: "13:00", status: "available" } as any,
+      ],
+    },
+  });
 
-    const { fields, append, remove } = useFieldArray({ control, name: "availableSlots", });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "availableSlots",
+  });
 
-    const onSubmit: SubmitHandler<IDoctorServiceInput> = async (data) => {
-        const currentUser = session?.user;
+  const onSubmit: SubmitHandler<IDoctorServiceInput> = async (data) => {
+    const currentUser = session?.user;
 
-        if (!currentUser) {
-            console.error("User session not found. Please log in.");
-            return;
-        }
+    if (!currentUser) {
+      toast.error("User session not found. Please log in.");
+      return;
+    }
 
-        const format12 = (t: string) => {
-            if (!t) return "";
-            let [h, m] = t.split(":").map(Number);
-            return `${String(h % 12 || 12).padStart(2, '0')}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
-        };
-
-        const finalSlots = data.availableSlots.map((slot: any) => ({
-            time: `${format12(slot.startTime)} - ${format12(slot.endTime)}`,
-            status: slot.status || "available"
-        }));
-
-        const formattedData = {
-            ...data,
-            name: currentUser.name,
-            email: currentUser.email,
-            fee: Number(data.fee),
-            rating: 4.5,
-            patientCount: 0,
-            experience: Number(data.experience),
-            availableSlots: finalSlots,
-            image: currentUser.image,
-        };
-
-        console.log("Sending to backend:", formattedData);
-
-        const ok = await addDoctorService(formattedData);
-        if (!ok) return console.error("Failed to save doctor.");
+    const format12 = (t: string) => {
+      if (!t) return "";
+      let [h, m] = t.split(":").map(Number);
+      return `${String(h % 12 || 12).padStart(2, "0")}:${String(m).padStart(
+        2,
+        "0"
+      )} ${h >= 12 ? "PM" : "AM"}`;
     };
+
+    const finalSlots = data.availableSlots.map((slot: any) => ({
+      time: `${format12(slot.startTime)} - ${format12(slot.endTime)}`,
+      status: slot.status || "available",
+    }));
+
+    const formattedData = {
+      ...data,
+      name: currentUser.name,
+      email: currentUser.email,
+      fee: Number(data.fee),
+      rating: 4.5,
+      patientCount: 0,
+      experience: Number(data.experience),
+      availableSlots: finalSlots,
+      image: currentUser.image,
+    };
+
+    try {
+      const ok = await addDoctorService(formattedData);
+
+      if (!ok) {
+        toast.error("Failed to save doctor. Please try again.");
+        return;
+      }
+
+      toast.success("Doctor service added successfully!");
+      router.push("/doctors");
+    } catch (error: any) {
+      console.error("Error adding doctor service:", error);
+      toast.error(error?.message || "Something went wrong. Please try again.");
+    }
+  };
+
+  // ...rest of your JSX form stays the same
 
     return (
         <main className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
