@@ -61,9 +61,11 @@ export async function updateProfile(id: string, name: string, email: string, ima
 }
 
 export async function createAppointment(bookingData: {
+   doctorId: string | { $oid: string } | undefined;
   userName: string;
   userEmail: string;
   doctorName: string;
+  doctorImg: string;
   specialty: string;
   fee: number;
   date: string;

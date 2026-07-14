@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form"; // ponytail: native integration with custom select
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
@@ -12,7 +12,9 @@ import { createAppointment } from "../../../../../server/serverAction";
 import { toast } from "sonner";
 
 interface BookAppointmentDialogProps {
+    doctorId: string | { $oid: string } | undefined;
     doctorName: string;
+    doctorImg: string;
     specialty: string;
     fee: number;
     availableSlots: Array<{ time: string; status: string }>;
@@ -23,41 +25,44 @@ interface FormValues {
     timeSlot: string;
 }
 
-export function BookAppointment({ doctorName, specialty, fee, availableSlots }: BookAppointmentDialogProps) {
+export function BookAppointment({ doctorName, specialty, fee, availableSlots, doctorImg, doctorId }: BookAppointmentDialogProps) {
     const { data: session, isPending } = authClient.useSession();
     const user = session?.user;
     const { register, handleSubmit, control, formState: { isSubmitting } } = useForm<FormValues>();
 
-   const onSubmit = async (data: FormValues) => {
-    if (!user) return toast.error("Please login to book an appointment");
+    const onSubmit = async (data: FormValues) => {
+        if (!user) return toast.error("Please login to book an appointment");
 
-    const bookingData = {
-        userName: user.name,
-        userEmail: user.email,
-        doctorName,
-        specialty,
-        fee,
-        date: data.date,
-        timeSlot: data.timeSlot,
+        const bookingData = {
+            userName: user.name,
+            userEmail: user.email,
+            userid: user.id,
+            doctorName,
+            doctorId,
+            doctorImg,
+            specialty,
+            fee,
+            date: data.date,
+            timeSlot: data.timeSlot,
+        };
+
+        const bookingPromise = async () => {
+            const apiCall = createAppointment(bookingData);
+            const delay = new Promise((resolve) => setTimeout(resolve, 2000));
+            const [result] = await Promise.all([apiCall, delay]);
+
+            if (!result.success) {
+                throw new Error(result.message || "Something went wrong.");
+            }
+            return result;
+        };
+
+        toast.promise(bookingPromise(), {
+            loading: "Booking your appointment...",
+            success: "Appointment booked successfully!",
+            error: (err: any) => err.message || "Failed to book appointment",
+        });
     };
-
-    const bookingPromise = async () => {
-        const apiCall = createAppointment(bookingData);
-        const delay = new Promise((resolve) => setTimeout(resolve, 2000));
-        const [result] = await Promise.all([apiCall, delay]);
-
-        if (!result.success) {
-            throw new Error(result.message || "Something went wrong.");
-        }
-        return result;
-    };
-
-    toast.promise(bookingPromise(), {
-        loading: "Booking your appointment...",
-        success: "Appointment booked successfully!",
-        error: (err: any) => err.message || "Failed to book appointment",
-    });
-};
 
     return (
         <Dialog>
@@ -96,9 +101,8 @@ export function BookAppointment({ doctorName, specialty, fee, availableSlots }: 
                                         <SelectValue placeholder="Select a time slot" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectGroup>
-                                            {availableSlots
-                                                .filter((slot) => slot.status === "available")
+                                        <SelectGroup className='bg-white'>
+                                            {availableSlots.filter((slot) => slot.status === "available")
                                                 .map((slot, idx) => (
                                                     <SelectItem key={idx} value={slot.time}>{slot.time}</SelectItem>
                                                 ))}

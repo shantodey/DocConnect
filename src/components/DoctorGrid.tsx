@@ -51,11 +51,7 @@ const updateFilters = (key: string, value: string | null) => {
           }}
             className="flex items-center w-full bg-gray-50 rounded-xl border border-gray-200 focus-within:border-[#006BFF] transition-all"
           >
-            <input
-              type="text"
-              name="query"
-              defaultValue={search || ""}
-              placeholder="Search doctor by name..."
+            <input  type="text"  name="query" defaultValue={search || ""} placeholder="Search doctor by name..."
               className="w-full bg-transparent outline-none p-3.5 text-gray-800 placeholder-gray-400 text-sm"
             />
             <button type="submit" className="bg-[#006BFF] hover:bg-[#0056cc] text-white px-6 py-2.5 mr-1.5 text-sm font-medium rounded-lg transition-colors">
@@ -65,12 +61,12 @@ const updateFilters = (key: string, value: string | null) => {
 
           {/* Filters Section */}
           <div className="flex w-full md:w-auto gap-3 shrink-0">
-            <Select value={sort || "all"} onValueChange={(val: string | null) => updateFilters("sort", val)}>
+            <Select value={sort || "Default"} onValueChange={(val: string | null) => updateFilters("sort", val)}>
               <SelectTrigger className="w-full md:w-44 bg-white border-gray-200 h-[46px] rounded-xl text-sm text-gray-700">
                 <SelectValue placeholder="Sort by Price" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup>
+                <SelectGroup className={'bg-white'}>
                   <SelectItem value="all">Default Sorting</SelectItem>
                   <SelectItem value="price-asc">Price: Low to High</SelectItem>
                   <SelectItem value="price-desc">Price: High to Low</SelectItem>
@@ -78,12 +74,12 @@ const updateFilters = (key: string, value: string | null) => {
               </SelectContent>
             </Select>
 
-            <Select value={specialty || "all"} onValueChange={(val: string | null) => updateFilters("specialty", val)}>
+            <Select value={specialty || "Default"} onValueChange={(val: string | null) => updateFilters("specialty", val)}>
               <SelectTrigger className="w-full md:w-44 bg-white border-gray-200 h-[46px] rounded-xl text-sm text-gray-700">
                 <SelectValue placeholder="Specialty" />
               </SelectTrigger>
               <SelectContent>
-                <SelectGroup>
+                <SelectGroup className={'bg-white'}>
                   <SelectItem value="all">All Specialties</SelectItem>
                   <SelectItem value="Dermatologist">Dermatologist</SelectItem>
                   <SelectItem value="Cardiologist">Cardiologist</SelectItem>

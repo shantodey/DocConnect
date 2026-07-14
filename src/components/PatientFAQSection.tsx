@@ -14,7 +14,7 @@ interface FAQItem {
 }
 
 interface PatientFAQSectionProps {
-  doctorImageSrc?: string; 
+  doctorImageSrc?: string;
   faqList?: FAQItem[];
 }
 
@@ -48,7 +48,7 @@ export default function PatientFAQSection({
   return (
     <section className="w-full bg-white py-16 px-6 md:px-12 lg:px-24">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        
+
         {/* LEFT COLUMN: Gradient Card with Transparent APNG */}
         <div className="relative flex justify-center lg:justify-start">
           <div className="relative w-full max-w-[420px] aspect-[4/5] bg-gradient-to-t from-[#ff8300] via-[#ffaa3a] to-white rounded-[40px] overflow-visible shadow-lg border border-orange-50">
@@ -69,11 +69,9 @@ export default function PatientFAQSection({
           <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight">
             Most questions by our beloved patients
           </h2>
-
-          {/* Shadcn Accordion Root */}
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion  className="w-full space-y-4">
             {faqList.map((faq) => (
-              <AccordionItem   key={faq.id}   value={faq.id}
+              <AccordionItem key={faq.id} value={faq.id}
                 className="border border-slate-200 rounded-2xl bg-white overflow-hidden transition-all duration-300 hover:border-orange-200 px-6 data-[state=open]:border-orange-300"
               >
                 <AccordionTrigger className="text-left font-semibold text-lg lg:text-xl text-slate-800 hover:text-slate-900 hover:no-underline py-5 focus-visible:ring-0">

@@ -1,9 +1,9 @@
 "use client";
 
-import { BadgeCheckIcon, BellIcon, CreditCardIcon, LogOutIcon,} from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage,} from "@/components/ui/avatar"
+import { BadgeCheckIcon, BellIcon, CreditCardIcon, LogOutIcon, } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage, } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Link from "next/link";
 import { HiOutlineMenu } from "react-icons/hi";
 import logo from "../assats/logo.png";
@@ -48,17 +48,16 @@ export default function Navbar() {
           {user ? (
 
             <DropdownMenu >
-              <DropdownMenuTrigger className="bg-yellow-50" render={<Button variant="ghost" size="icon" className="rounded-full border-2"><Avatar>
-                <AvatarImage src={image || "/avatar.jpg"} alt={name} />
-                <AvatarFallback>{name}</AvatarFallback>
-              </Avatar></Button>} />
-              <DropdownMenuContent align="end">
+              <DropdownMenuTrigger nativeButton={false} render={
+                <Button variant="ghost" size="icon" className="rounded-full border-2"><Avatar>
+                  <AvatarImage src={image || "/avatar.jpg"} alt={name} />
+                  <AvatarFallback>{name}</AvatarFallback>
+                </Avatar></Button>
+              } />
+              <DropdownMenuContent align="end" className={'bg-white'}>
                 <DropdownMenuGroup>
-                  <DropdownMenuItem render={<Link href="/profile"></Link>}>  <FiUser /> Account </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <BellIcon />
-                    Notifications
-                  </DropdownMenuItem>
+                  <DropdownMenuItem nativeButton={false} render={<Link href="/profile"></Link>}>  <FiUser /> Account </DropdownMenuItem>
+                  <DropdownMenuItem nativeButton={false} render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>}></DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
@@ -76,23 +75,19 @@ export default function Navbar() {
         </div>
 
         {/* Mobile */}
-        <div className="md:hidden">
+        <div className="md:hidden bg-white">
           <Sheet>
-            <Sheet>
-              <SheetTrigger render={
-                <Button variant="ghost" size="icon">
-                  <HiOutlineMenu className="h-6 w-6" />
-                </Button>
-              } />
-              <SheetContent side="right">
-                ...
-              </SheetContent>
-            </Sheet>
-
-            <SheetContent side="right">
-              <div className="mt-8 flex flex-col gap-6">
+            <SheetTrigger render={
+              <Button variant="ghost" size="icon">
+                <HiOutlineMenu className="h-6 w-6" />
+              </Button>
+            } />
+            <SheetContent side="right" className={'bg-white'}>
+              <div className="mt-8 flex flex-col gap-6 px-4">
                 {links.map((item) => (
-                  <Link key={item.label} href={item.href} className="text-lg"> {item.label} </Link>
+                  <Link key={item.label} href={item.href} className="text-lg">
+                    {item.label}
+                  </Link>
                 ))}
 
                 <div className="mt-4 border-t pt-4">

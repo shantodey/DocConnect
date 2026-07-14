@@ -4,14 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getDoctorById } from "../../../../../server/serverAction";
 import { FeedbackTab } from "../FeedbackTab";
 import Link from "next/link";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { Breadcrumb,BreadcrumbItem,  BreadcrumbLink,  BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import { BookAppointment } from "./BookAppointment";
 
 
@@ -50,7 +43,7 @@ export interface Doctor {
 export default async function DoctorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const doctor = (await getDoctorById(id)) as Doctor | null;
-
+    
     if (!doctor) {
         return (
             <div className="text-center py-20">
@@ -61,7 +54,6 @@ export default async function DoctorDetailsPage({ params }: { params: Promise<{ 
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-            {/* Breadcrumb */}
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -81,7 +73,6 @@ export default async function DoctorDetailsPage({ params }: { params: Promise<{ 
             </Breadcrumb>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
-                {/* Left Section */}
                 <div className="md:col-span-2 space-y-8">
                     <div className="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                         <img
@@ -177,16 +168,9 @@ export default async function DoctorDetailsPage({ params }: { params: Promise<{ 
                         </div>
                     )}
 
-                    <BookAppointment
-                        doctorName={doctor.name}
-                        specialty={doctor.specialization}
-                        fee={doctor.fee}
-                        availableSlots={doctor.availableSlots || []}
-                    />
+                    <BookAppointment doctorName={doctor.name} doctorImg={doctor.image} doctorId={doctor._id} specialty={doctor.specialization} fee={doctor.fee} 
+                    availableSlots={doctor.availableSlots || []} />
                 </div>
-                <Button className="w-full bg-[#006BFF] hover:bg-[#0056D4] text-white h-12 rounded-xl font-bold transition-colors text-sm">
-                    Book Appointment
-                </Button>
             </div>
         </div>
    
