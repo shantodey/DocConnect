@@ -1,9 +1,9 @@
-import React from 'react';
+
 import { ArrowRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "@/components/ui/button";
 
-// টাইপ ডিফিনিশন
+
 interface Service {
   id: string;
   title: string;
@@ -11,7 +11,7 @@ interface Service {
   color: string;
 }
 
-// ডেটা সোর্স
+
 const services: Service[] = [
   { 
     id: "1", 
@@ -51,7 +51,7 @@ const services: Service[] = [
   },
 ];
 
-export default function ServicesGrid(): JSX.Element {
+export default function ServicesGrid (){
   return (
     <section className="py-20 bg-white">
       <div className="container mx-auto px-6">
@@ -63,7 +63,7 @@ export default function ServicesGrid(): JSX.Element {
           </p>
         </div>
 
-        {/* গ্রিড লেআউট */}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service) => (
             <Card 
