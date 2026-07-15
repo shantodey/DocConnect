@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { getMyAppointments, cancelAppointment } from "../../../../server/serverAction";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "./spinner";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter,  AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from "@/components/ui/alert-dialog";
 import { AiOutlineDelete } from "react-icons/ai";
 import { GiStethoscope } from "react-icons/gi";
 import { FcAlarmClock } from "react-icons/fc";
@@ -89,8 +89,7 @@ const page = () => {
                                             const past = isPast(a.date);
                                             return (
                                                 <div key={a._id} className="relative">
-                                                    <span className="absolute -left-8 top-2 w-3.5 h-3.5 rounded-full border-2"
-                                                        style={{ background: past ? "#F7F5F0" : "#2D6A5F", borderColor: past ? "#B8622E" : "#2D6A5F" }} />
+                                                    <span className="absolute -left-8 top-2 w-3.5 h-3.5 rounded-full border-2" style={{ background: past ? "#F7F5F0" : "#2D6A5F", borderColor: past ? "#B8622E" : "#2D6A5F" }} />
 
                                                     <div className="flex gap-4 items-start bg-white/60 border border-[#0F1729]/8 rounded-xl p-4 hover:border-[#2D6A5F]/40 transition-colors">
                                                         <div className="relative w-14 h-14 rounded-lg overflow-hidden shrink-0 bg-[#0F1729]/5">
@@ -105,15 +104,13 @@ const page = () => {
                                                                 </h3>
                                                                 <div className="flex items-center gap-2 shrink-0">
                                                                     {past && (
-                                                                        <Badge className="bg-[#B8622E]/10 text-[#B8622E] border-none font-mono text-[10px]">
-                                                                            Past
-                                                                        </Badge>
+                                                                        <Badge className="bg-[#B8622E]/10 text-[#B8622E] border-none font-mono text-[10px]">  Past </Badge>
                                                                     )}
                                                                     {!past && (
                                                                         <AlertDialog>
                                                                             <AlertDialogTrigger render={
-                                                                                <button  aria-label="Cancel appointment"  className="text-[#8B93A7] hover:text-[#B8622E] transition-colors" disabled={cancellingId === a._id}>
-                                                                                    {cancellingId === a._id ? <Spinner className="size-3.5" /> : <AiOutlineDelete className="w-4.5 h-4.5"/>}
+                                                                                <button aria-label="Cancel appointment" className="text-[#8B93A7] hover:text-[#B8622E] transition-colors" disabled={cancellingId === a._id}>
+                                                                                    {cancellingId === a._id ? <Spinner className="size-3.5" /> : <AiOutlineDelete className="w-4.5 h-4.5" />}
                                                                                 </button>
                                                                             } />
                                                                             <AlertDialogContent className="bg-[#F7F5F0] border-[#0F1729]/10 rounded-2xl shadow-xl">
@@ -128,7 +125,7 @@ const page = () => {
                                                                                     </AlertDialogDescription>
                                                                                 </AlertDialogHeader>
                                                                                 <AlertDialogFooter>
-                                                                                    <AlertDialogAction onClick={() => handleCancel(a._id)}  className="bg-[#B8622E] hover:bg-[#B8622E]/90 text-white">
+                                                                                    <AlertDialogAction onClick={() => handleCancel(a._id)} className="bg-[#B8622E] hover:bg-[#B8622E]/90 text-white">
                                                                                         Cancel appointment
                                                                                     </AlertDialogAction>
                                                                                     <AlertDialogCancel className="border-[#0F1729]/15 text-[#0F1729] hover:bg-[#0F1729]/5">
@@ -142,7 +139,7 @@ const page = () => {
                                                             </div>
 
                                                             <div className="flex items-center gap-1.5 text-sm text-[#2D6A5F] mt-0.5">
-                                                                <GiStethoscope className="w-3.5 h-3.5"/>
+                                                                <GiStethoscope className="w-3.5 h-3.5" />
                                                                 {a.specialty}
                                                             </div>
 
@@ -152,7 +149,7 @@ const page = () => {
                                                                 </span>
                                                                 <span className="flex items-center gap-1">
                                                                     <FcAlarmClock className="w-3.5 h-3.5" /> {a.timeSlot}
-                                                                  
+
                                                                 </span>
                                                                 <span>{a.fee.toLocaleString()}</span>
                                                             </div>
@@ -173,3 +170,25 @@ const page = () => {
 };
 
 export default page;
+
+import { Button } from "@/components/ui/button"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
+export function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger delay={10} closeDelay={100} render={<Button variant="link">Hover Here</Button>} />
+      <HoverCardContent className="flex w-64 flex-col gap-0.5">
+        <div className="font-semibold">@nextjs</div>
+        <div>The React Framework – created and maintained by @vercel.</div>
+        <div className="mt-1 text-xs text-muted-foreground">
+          Joined December 2021
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  )
+}

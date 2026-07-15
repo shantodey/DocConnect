@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AuthLayoutPage = ({children}) => {
+const AuthLayoutPage = ({children}:any) => {
     return (
         <main>
             {children}

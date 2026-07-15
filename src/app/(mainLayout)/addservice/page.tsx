@@ -119,7 +119,7 @@ export default function AddDoctorServiceForm() {
     }
   };
 
-  // ...rest of your JSX form stays the same
+ 
 
     return (
         <main className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
@@ -144,7 +144,6 @@ export default function AddDoctorServiceForm() {
                         </div>
                     </div>
                     
-                    {/* ফুরম ইনপুট ফিল্ড সমূহ (specialization, experience ইত্যাদি আগের মতোই থাকবে) */}
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Professional Overview</h2>
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

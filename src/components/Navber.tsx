@@ -51,11 +51,7 @@ export default function Navbar() {
             <>
               {role === "Doctor" ? (
                 <HoverCard>
-                  <HoverCardTrigger
-                    delay={10}
-                    closeDelay={100}
-                    render={
-                      // ponytail: nativeButton={false} because we're rendering a Link inside
+                  <HoverCardTrigger delay={10}  closeDelay={100} render={
                       <Button nativeButton={false} variant="ghost" render={<Link href="/addservice">Add Services</Link>} />
                     }
                   />
@@ -70,7 +66,6 @@ export default function Navbar() {
               )}
 
               <DropdownMenu>
-                {/* ponytail: Trigger elements containing native button get nativeButton={false} or we use native HTML buttons */}
                 <DropdownMenuTrigger render={
                   <button className="rounded-full border-2">
                     <Avatar>
@@ -94,7 +89,6 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              {/* ponytail: Prevent warnings by setting nativeButton={false} when rendering standard Links inside custom Buttons */}
               <Button nativeButton={false} variant="ghost" render={<Link href="/login">Login</Link>} />
               <Button nativeButton={false} render={<Link href="/register">Register</Link>} />
             </>
@@ -121,7 +115,7 @@ export default function Navbar() {
                   {user ? (
                     <div className="flex flex-col gap-3">
                       <Link href="/profile" className="text-lg">Profile</Link>
-                      <Link href="/dashboard" className="text-lg">Dashboard</Link>
+                      <Link href="/appoint" className="text-lg">My Appoint</Link>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">
