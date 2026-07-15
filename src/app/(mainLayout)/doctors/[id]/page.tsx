@@ -1,6 +1,5 @@
 import { FaStar } from "react-icons/fa";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { getDoctorById } from "../../../../../server/serverAction";
 import { FeedbackTab } from "../FeedbackTab";
 import Link from "next/link";

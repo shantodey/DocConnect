@@ -17,14 +17,12 @@ const quickLinks: FooterLink[] = [
   { label: 'Home', href: '/' },
   { label: 'About us', href: '/about' },
   { label: 'Services', href: '/services' },
-  { label: 'Blog', href: '/blog' },
 ];
 
 const actionLinks: FooterLink[] = [
   { label: 'Find a doctor', href: '/doctors' },
-  { label: 'Request an Appointment', href: '/appointment' },
+  { label: 'Request an Appointment', href: '/doctors' },
   { label: 'Find a Location', href: '/locations' },
-  { label: 'Get a opinion', href: '/opinion' },
 ];
 
 const supportLinks: FooterLink[] = [
