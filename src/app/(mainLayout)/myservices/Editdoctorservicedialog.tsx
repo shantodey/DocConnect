@@ -1,13 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { addDoctorService } from "../../../../server/serverAction";
-import { authClient } from "@/lib/auth-client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trash2 } from "lucide-react";
 
-interface IDoctorServiceInput {
+export interface IDoctorServiceInput {
     specialization: string;
     experience: number;
     fee: number;
@@ -26,8 +26,6 @@ interface IDoctorServiceInput {
         endDate: string;
     };
     availableSlots: {
-        startTime?: string;
-        endTime?: string;
         time: string;
         status: "available" | "booked";
     }[];
@@ -40,115 +38,95 @@ interface IDoctorServiceInput {
     patientCount?: number;
 }
 
-export default function AddDoctorServiceForm() {
-    const router = useRouter();
-    const { data: session } = authClient.useSession();
-    const user = session?.user;
+// প্রপ্সের ইন্টারফেস ডিফাইন করা হলো
+interface EditDoctorServiceDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    doctor: any;
+    onSave: (updatedData: any) => Promise<void>;
+}
 
+export default function EditDoctorServiceDialog({
+    open,
+    onOpenChange,
+    doctor,
+    onSave,
+}: EditDoctorServiceDialogProps) {
 
-    const { image, name, role, email,  }: any = user || {
-        id: "",
-        image: undefined,
-        name: "",
-        role: "",
-        email: "",
-    };
-
-    const { register, control, handleSubmit, formState: { errors, isSubmitting }, } = useForm<IDoctorServiceInput>({
+    const { register, control, handleSubmit, reset, formState: { errors } } = useForm<IDoctorServiceInput>({
         defaultValues: {
             currency: "BDT",
             availableSlots: [
-                { startTime: "10:00", endTime: "13:00", status: "available" } as any,
+                { time: "10:00 AM - 02:10 PM", status: "available" },
             ],
         },
     });
 
-    const { fields, append, remove } = useFieldArray({ control, name: "availableSlots", });
+    const { fields, append, remove } = useFieldArray({ control, name: "availableSlots" });
+
+    useEffect(() => {
+        if (doctor && open) {
+            reset({
+                specialization: doctor.specialization || "",
+                experience: doctor.experience || 0,
+                fee: doctor.fee || 0,
+                currency: doctor.currency || "BDT",
+                about: doctor.about || "",
+                education: {
+                    degree: doctor.education?.degree || "",
+                    university: doctor.education?.university || "",
+                    startDate: doctor.education?.startDate || "",
+                    endDate: doctor.education?.endDate || "",
+                },
+                experienceDetails: {
+                    position: doctor.experienceDetails?.position || "",
+                    hospital: doctor.experienceDetails?.hospital || "",
+                    startDate: doctor.experienceDetails?.startDate || "",
+                    endDate: doctor.experienceDetails?.endDate || "",
+                },
+                availableSlots: doctor.availableSlots?.length > 0
+                    ? doctor.availableSlots.map((slot: any) => ({
+                        time: slot.time || "",
+                        status: slot.status || "available",
+                    }))
+                    : [{ time: "10:00 AM - 02:10 PM", status: "available" }],
+            });
+        }
+    }, [doctor, open, reset]);
 
     const onSubmit: SubmitHandler<IDoctorServiceInput> = async (data) => {
-        const currentUser = session?.user;
-
-        if (!currentUser) {
-            toast.error("User session not found. Please log in.");
-            return;
-        }
-
-        const format12 = (t: string) => {
-            if (!t) return "";
-            let [h, m] = t.split(":").map(Number);
-            return `${String(h % 12 || 12).padStart(2, "0")}:${String(m).padStart(
-                2,
-                "0"
-            )} ${h >= 12 ? "PM" : "AM"}`;
-        };
-
-        const finalSlots = data.availableSlots.map((slot: any) => ({
-            time: `${format12(slot.startTime)} - ${format12(slot.endTime)}`,
-            status: slot.status || "available",
-        }));
-
-        const formattedData = {
-            ...data,
-            id: currentUser.id,
-            name: currentUser.name,
-            email: currentUser.email,
-            fee: Number(data.fee),
-            rating: 4.5,
-            patientCount: 0,
-            experience: Number(data.experience),
-            availableSlots: finalSlots,
-            image: currentUser.image,
-        };
-
         try {
-            const ok = await addDoctorService(formattedData);
+            const formattedData = {
+                ...data,
+                fee: Number(data.fee),
+                experience: Number(data.experience),
+                availableSlots: data.availableSlots.map((slot) => ({
+                    time: slot.time,
+                    status: slot.status || "available",
+                })),
+            };
 
-            if (!ok) {
-                toast.error("Failed to save doctor. Please try again.");
-                return;
-            }
-
-            toast.success("Doctor service added successfully!");
-            router.push("/doctors");
+            await onSave(formattedData);
+            toast.success("Doctor service updated successfully!");
         } catch (error: any) {
-            console.error("Error adding doctor service:", error);
+            console.error("Error updating doctor service:", error);
             toast.error(error?.message || "Something went wrong. Please try again.");
         }
     };
 
-
-
     return (
-        <main className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-10">
-                <div className="mb-8 text-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Complete Your Doctor Profile</h1>
-                    <p className="mt-2 text-sm text-gray-500">Provide your professional details to start receiving appointments.</p>
-                </div>
-
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl p-6  bg-white">
+            
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                    <div className="flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50/50 p-4">
-                        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-gray-100">
-                            {image ? (
-                                <img src={image} alt={name || "Doctor"} className="h-full w-full object-cover" />
-                            ) : (
-                                <div className="h-full w-full bg-gray-200" />
-                            )}
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-gray-900">{name ? `Dr. ${name}` : "Doctor"}</p>
-                            <p className="text-xs text-gray-500">{email} | Role: {role || "N/A"}</p>
-                        </div>
-                    </div>
-
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Professional Overview</h2>
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Specialization</label>
-                                <input type="text" placeholder="e.g. Cardiologist, Neurologist"
-                                    {...register("specialization", { required: "Specialization is required" })}
+                                <input type="text" placeholder="e.g. Cardiologist, Neurologist"  {...register("specialization", { required: "Specialization is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                    defaultValue={doctor?.specialization}
                                 />
                                 {errors.specialization && <span className="text-xs text-red-500 mt-1">{errors.specialization.message}</span>}
                             </div>
@@ -157,14 +135,16 @@ export default function AddDoctorServiceForm() {
                                 <label className="block text-sm font-medium text-gray-700">Years of Experience</label>
                                 <input type="number" placeholder="e.g. 15" {...register("experience", { required: "Experience is required", min: 0 })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                    defaultValue={doctor?.experience}
                                 />
                                 {errors.experience && <span className="text-xs text-red-500 mt-1">{errors.experience.message}</span>}
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Consultation Fee</label>
-                                <input type="number" placeholder="e.g. 1200"{...register("fee", { required: "Fee is required", min: 0 })}
+                                <input type="number" placeholder="e.g. 1200" {...register("fee", { required: "Fee is required", min: 0 })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                    defaultValue={doctor?.fee}
                                 />
                                 {errors.fee && <span className="text-xs text-red-500 mt-1">{errors.fee.message}</span>}
                             </div>
@@ -173,6 +153,7 @@ export default function AddDoctorServiceForm() {
                                 <label className="block text-sm font-medium text-gray-700">Currency</label>
                                 <select {...register("currency")}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                    defaultValue={doctor?.currency || "BDT"}
                                 >
                                     <option value="BDT">BDT (৳)</option>
                                     <option value="USD">USD ($)</option>
@@ -183,13 +164,14 @@ export default function AddDoctorServiceForm() {
                                 <label className="block text-sm font-medium text-gray-700">About (Short Bio)</label>
                                 <textarea rows={3} placeholder="Briefly describe your expertise..." {...register("about", { required: "About bio is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                    defaultValue={doctor?.about}
                                 />
                                 {errors.about && <span className="text-xs text-red-500 mt-1">{errors.about.message}</span>}
                             </div>
                         </div>
                     </div>
 
-                    {/* Education */}
+
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Education Details</h2>
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -203,7 +185,7 @@ export default function AddDoctorServiceForm() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">University / Institution</label>
-                                <input type="text" placeholder="e.g. BSMMU"  {...register("education.university", { required: "University is required" })}
+                                <input type="text" placeholder="e.g. BSMMU" {...register("education.university", { required: "University is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                                 />
                                 {errors.education?.university && <span className="text-xs text-red-500 mt-1">{errors.education.university.message}</span>}
@@ -241,7 +223,7 @@ export default function AddDoctorServiceForm() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Hospital / Clinic</label>
-                                <input type="text" placeholder="e.g. Labaid Cardiac Hospital"  {...register("experienceDetails.hospital", { required: "Hospital is required" })}
+                                <input type="text" placeholder="e.g. Labaid Cardiac Hospital" {...register("experienceDetails.hospital", { required: "Hospital is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                                 />
                                 {errors.experienceDetails?.hospital && <span className="text-xs text-red-500 mt-1">{errors.experienceDetails.hospital.message}</span>}
@@ -249,14 +231,14 @@ export default function AddDoctorServiceForm() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                                <input type="date"  {...register("experienceDetails.startDate", { required: "Start date is required" })}
+                                <input type="date" {...register("experienceDetails.startDate", { required: "Start date is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                                 />
                                 {errors.experienceDetails?.startDate && <span className="text-xs text-red-500 mt-1">{errors.experienceDetails.startDate.message}</span>}
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">End Date (or 'Present')</label>
+                                <label className="block text-sm font-medium text-gray-700">End Date / Present</label>
                                 <input type="text" placeholder="e.g. Present" {...register("experienceDetails.endDate", { required: "End date is required" })}
                                     className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
                                 />
@@ -265,56 +247,64 @@ export default function AddDoctorServiceForm() {
                         </div>
                     </div>
 
-                    {/* Available Slots */}
+                    {/* Available Slots Section */}
                     <div>
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Available Slots</h2>
                         <div className="space-y-4">
                             {fields.map((field, index) => (
-                                <div key={field.id} className="flex flex-col gap-1 rounded-lg border border-gray-100 p-4 bg-gray-50/50">
-                                    <div className="flex flex-wrap items-end gap-4">
-                                        <div className="flex-1 min-w-[120px]">
-                                            <label className="block text-xs font-medium text-gray-500 mb-1">Start Time</label>
-                                            <input type="time" required  {...register(`availableSlots.${index}.startTime` as any, { required: "Start time is required" })}
-                                                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 appearance-none"
-                                            />
-                                        </div>
-
-                                        <div className="flex-1 min-w-[120px]">
-                                            <label className="block text-xs font-medium text-gray-500 mb-1">End Time</label>
-                                            <input type="time" required {...register(`availableSlots.${index}.endTime` as any, { required: "End time is required" })}
-                                                className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500 appearance-none"
-                                            />
-                                        </div>
-
-                                        {fields.length > 1 && (
-                                            <button type="button" onClick={() => remove(index)} className="text-sm font-medium text-red-500 hover:text-red-700 pb-2.5 transition h-10 flex items-center">
-                                                Remove
-                                            </button>
+                                <div key={field.id} className="flex items-center gap-3 rounded-lg border border-gray-100 p-4 bg-gray-50/50">
+                                    <div className="flex-1">
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Time Range</label>
+                                        <input
+                                            type="text"
+                                            placeholder="e.g. 10:35 AM - 02:10 PM"
+                                            {...register(`availableSlots.${index}.time` as const, { required: "Time slot is required" })}
+                                            className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                        />
+                                        {errors.availableSlots?.[index]?.time && (
+                                            <span className="text-xs text-red-500 mt-1">
+                                                {errors.availableSlots[index]?.time?.message}
+                                            </span>
                                         )}
                                     </div>
 
-                                    {((errors.availableSlots as any)?.[index]?.startTime || (errors.availableSlots as any)?.[index]?.endTime) && (
-                                        <span className="text-xs text-red-500 mt-1">
-                                            {(errors.availableSlots as any)[index]?.startTime?.message || (errors.availableSlots as any)[index]?.endTime?.message}
-                                        </span>
+                                    <div className="w-32">
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">Status</label>
+                                        <select
+                                            {...register(`availableSlots.${index}.status` as const)}
+                                            className="block w-full rounded-lg border border-gray-300 px-3 py-[9px] text-sm bg-white focus:border-sky-500 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                                        >
+                                            <option value="available">Available</option>
+                                            <option value="booked">Booked</option>
+                                        </select>
+                                    </div>
+
+                                    {fields.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => remove(index)}
+                                            className="text-muted-foreground hover:text-red-500 pt-5 transition duration-200"
+                                            title="Remove Slot"
+                                        >
+                                            <Trash2 className="h-5 w-5" />
+                                        </button>
                                     )}
                                 </div>
                             ))}
 
-                            <button type="button" onClick={() => append({ startTime: "10:00", endTime: "13:00", status: "available" } as any)}
+                            <button type="button"  onClick={() => append({ time: "10:00 AM - 01:00 PM", status: "available" })}
                                 className="mt-2 text-sm font-semibold text-sky-600 hover:text-sky-800 transition block">
                                 + Add More Slot
                             </button>
                         </div>
                     </div>
 
-                    <div className="pt-6">
-                        <Button type="submit" disabled={!session?.user} className="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg text-base font-semibold shadow-sm transition-all">
-                            {!session?.user ? "Loading Session..." : "Save & Enlist Service"}
-                        </Button>
+                    <div className="pt-6 flex flex-col gap-4">
+                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="w-full py-3 rounded-lg text-base font-semibold">  Cancel </Button>
+                        <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 text-white py-3 rounded-lg text-base font-semibold shadow-sm transition-all"> Save Changes </Button>
                     </div>
                 </form>
-            </div>
-        </main>
+            </DialogContent>
+        </Dialog>
     );
 }

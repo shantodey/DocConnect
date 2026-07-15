@@ -12,6 +12,7 @@ import Image from "next/image";
 import { authClient } from "@/lib/auth-client";
 import { FiUser } from "react-icons/fi";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
+import { MdOutlineMedicalServices } from "react-icons/md";
 
 
 const links = [
@@ -36,7 +37,6 @@ export default function Navbar() {
           <span className="text-2xl font-semibold">DocConnect</span>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden items-center gap-10 md:flex">
           {links.map((item) => (
             <Link key={item.label} href={item.href} className="text-sm font-medium text-gray-600 transition hover:text-sky-600">
@@ -76,8 +76,9 @@ export default function Navbar() {
                 } />
                 <DropdownMenuContent align="end" className={'bg-white'}>
                   <DropdownMenuGroup>
-                    <DropdownMenuItem render={<Link href="/profile"><FiUser /> Account </Link>} />
+                    <DropdownMenuItem render={<Link href="/profile"><FiUser /> Profile </Link>} />
                     <DropdownMenuItem render={<Link href={'/appoint'}><BellIcon /> My Appoint </Link>} />
+                    <DropdownMenuItem render={<Link href={'/myservices'}><MdOutlineMedicalServices />My Services </Link>} />
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>
@@ -114,8 +115,9 @@ export default function Navbar() {
                 <div className="mt-4 border-t pt-4">
                   {user ? (
                     <div className="flex flex-col gap-3">
-                      <Link href="/profile" className="text-lg">Profile</Link>
-                      <Link href="/appoint" className="text-lg">My Appoint</Link>
+                      <Link href="/profile" className="text-lg flex gap-1.5 justify-start items-center"> <FiUser /> Profile</Link>
+                      <Link href="/appoint" className="text-lg flex gap-1.5 justify-start items-center"><BellIcon /> My Appoint</Link>
+                      <Link href="/myservices" className="text-lg flex gap-1.5 justify-start items-center"><MdOutlineMedicalServices />My Services</Link>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">

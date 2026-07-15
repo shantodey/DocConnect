@@ -133,3 +133,65 @@ export async function addDoctorService(doctor: Record<string, any>) {
     return false;
   }
 }
+
+export async function getMyDoctorServices(id: string) {
+  try {
+    const response = await fetch(
+      `${process.env.SERVER_URL}/myservices?id=${encodeURIComponent(id)}`
+    );
+    if (!response.ok) return [];
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching my doctor services:", error);
+    return [];
+  }
+}
+
+
+
+export async function updateDoctorService(serviceId: string, userId: string, updatedData: any) {
+  try {
+    const response = await fetch(
+      `${process.env.SERVER_URL}/myservices?serviceId=${encodeURIComponent(serviceId)}&userId=${encodeURIComponent(userId)}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update service.");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error updating doctor service:", error);
+    return null;
+  }
+}
+
+
+export async function deleteDoctorService(serviceId: string, userId: string) {
+  try {
+    const response = await fetch(
+      `${process.env.SERVER_URL}/myservices?serviceId=${encodeURIComponent(serviceId)}&userId=${encodeURIComponent(userId)}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to delete service.");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error deleting doctor service:", error);
+    return null;
+  }
+}
